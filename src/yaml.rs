@@ -140,13 +140,13 @@ impl From<yaml_rust::Yaml> for Yaml {
 
 impl From<Yaml> for String {
     fn from(yaml: Yaml) -> Self {
-        format!("{}", yaml.contents)
+        format!("{}", yaml.to_string())
     }
 }
 
 // How to display a Yaml object
 impl Display for Yaml {
     fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
-        write!(f, "{}", String::from(self.clone()))
+        write!(f, "{}", self.contents)
     }
 }
