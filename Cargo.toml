@@ -5,7 +5,7 @@ authors = ["adam-mcdaniel <adam.mcdaniel17@gmail.com>"]
 edition = "2018"
 description = "A rust library to parse yaml files"
 license = "MIT"
-readme = "README.md"
+documentation = "README.md"
 
 [dependencies]
 yaml-rust="0.4.3"
