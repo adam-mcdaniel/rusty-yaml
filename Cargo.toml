@@ -1,0 +1,8 @@
+[package]
+name = "rusty-yaml"
+version = "0.1.0"
+authors = ["adam-mcdaniel <adam.mcdaniel17@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+yaml-rust="0.4.3"
