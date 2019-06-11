@@ -103,7 +103,7 @@ impl IntoIterator for Yaml {
 impl From<String> for Yaml {
     fn from(s: String) -> Self {
         Self {
-            contents: s.to_string(),
+            contents: s.to_string().replace("\"", "\'"),
             name: String::from(""),
         }
     }
