@@ -23,15 +23,20 @@ impl Yaml {
     pub fn get_section<S: Display>(&self, index: S) -> Result<Self, String> {
         match YamlLoader::load_from_str(&self.contents) {
             Ok(reader) => {
-                let result = reader[0][index.to_string().as_str()].clone();
+                // let result = if lenreader[0];
+                let result = if reader.len() > 0 {
+                    reader[0][index.to_string().as_str()].clone()
+                } else {
+                    return Err(format!("Could not get section '{}' because the parent section is empty", index));
+                };
 
                 let mut s = Self::from(result);
                 s.name = index.to_string();
                 Ok(s)
-            }
+            },
 
             Err(e) => {
-                Err(format!("Malformed yaml section: {}\nError: {:?}", self, e))
+                return Err(format!("Could not get section '{}' because {}", index, e.to_string()));
             }
         }
     }
@@ -52,8 +57,8 @@ impl Yaml {
                     .collect()),
                 _ => Ok(vec![]),
             },
-            Err(e) => {
-                Err(format!("Malformed yaml section: {}\nError: {:?}", self, e))
+            Err(_) => {
+                return Err(format!("Malformed yaml section '{}'", self.name));
             }
         }
     }
@@ -61,7 +66,7 @@ impl Yaml {
     /// Does this yaml section have a section with this name?
     /// Requires immutable access
     pub fn has_section<S: Display>(&self, index: S) -> bool {
-        self.get_section_names().unwrap_or(vec![]).contains(&index.to_string())
+        self.get_section_names().unwrap().contains(&index.to_string())
     }
 
     pub fn nth<N: Into<i32>>(&self, n: N) -> Result<Self, ()> {
@@ -137,15 +142,18 @@ impl From<yaml_rust::Yaml> for Yaml {
     fn from(yaml: yaml_rust::Yaml) -> Self {
         let mut out_str = String::new();
         let mut emitter = YamlEmitter::new(&mut out_str);
-        match emitter.dump(&yaml) {
-            Ok(_) => {}
-            Err(e) => {
-                panic!("Malformed yaml section: {:#?}\nError: {:?}", yaml, e);
-            }
+        match emitter.dump(&yaml) {_ => {}};
+
+
+        let lines = out_str.lines().collect::<Vec<&str>>();
+        out_str = if lines.len() > 0 {
+            lines[1..]
+                    .join("\n")
+                    .to_string()
+        } else {
+            "".to_string()
         };
-        out_str = out_str.lines().collect::<Vec<&str>>()[1..]
-            .join("\n")
-            .to_string();
+
 
         Self::from(out_str)
     }
