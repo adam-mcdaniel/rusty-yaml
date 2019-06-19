@@ -8,7 +8,7 @@ Copy and paste the following into your Cargo.toml.
 
 ```toml
 [dependencies]
-rusty-yaml="0.1"
+rusty-yaml="0.4"
 ```
 
 ## Examples
@@ -39,8 +39,8 @@ builders:
     println!(
         "section names: {:?}",
         yaml_reader
-            .get_section("builders")
-            .get_section("build")
+            .get_section("builders").unwrap()
+            .get_section("build").unwrap()
             .get_section_names()
     );
 
@@ -53,9 +53,9 @@ builders:
     println!("has builders: {}", yaml_reader.has_section("builders"));
 
 
-    for section in yaml_reader.get_section("builders") {
+    for section in yaml_reader.get_section("builders").unwrap() {
         println!("Name: {}", section.get_name());
-        for command in section.get_section("script") {
+        for command in section.get_section("script").unwrap() {
             println!("command: '{}'", command);
         }
     }
