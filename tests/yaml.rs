@@ -19,7 +19,7 @@ mod tests {
             - 2
             ",
         );
-        assert_eq!(y.get_section_names(), vec!["section1".to_string()]);
+        assert_eq!(y.get_section_names(), Ok(vec!["section1".to_string()]));
     }
 
 
@@ -41,7 +41,7 @@ mod tests {
         );
 
         assert_eq!(
-            y.get_section("section1").get_section("whoa"),
+            y.get_section("section1").and_then(|y| y.get_section("whoa")),
             Yaml::from(
                 "
                 whoa:
@@ -76,9 +76,11 @@ mod tests {
         );
 
         let real_sections = y
-            .get_section_names()
+            .get_section_names().unwrap()
             .iter()
             .map(|n| y.get_section(n))
+            .filter(|y| y.is_ok())
+            .map(|y| y.unwrap())
             .collect::<Vec<Yaml>>();
         let mut test_sections = vec![];
 
@@ -88,5 +90,47 @@ mod tests {
         }
 
         assert_eq!(real_sections, test_sections);
+    }
+
+    // Test yaml nth
+    #[test]
+    fn yaml_nth() {
+        let y = Yaml::from(
+            "
+        section1:
+            whoa:
+                - test
+                - 2
+                - [value, 1, \"seven\"]
+            spill-the-tea:
+                - tea
+                - 2
+                - spill
+            ",
+        );
+        
+        assert_eq!("whoa:
+  - test
+  - 2
+  - - value
+    - 1
+    - seven
+spill-the-tea:
+  - tea
+  - 2
+  - spill".to_string(), y.nth(0).to_string());
+    }
+
+    // Test yaml key: value
+    #[test]
+    fn yaml_key_value() {
+        let y = Yaml::from(
+            "
+        section1:
+            section2: \"testing\"
+            ",
+        );
+        
+        assert_eq!("testing".to_string(), y.get_section("section1").unwrap().get_section("section2").unwrap().nth(0).to_string());
     }
 }
