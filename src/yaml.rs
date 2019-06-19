@@ -27,18 +27,23 @@ impl Yaml {
                 let result = if reader.len() > 0 {
                     reader[0][index.to_string().as_str()].clone()
                 } else {
-                    return Err(format!("Could not get section '{}' because the parent section is empty", index));
+                    return Err(format!(
+                        "Could not get section '{}' because the parent section is empty",
+                        index
+                    ));
                 };
 
                 let mut s = Self::from(result);
                 s.name = index.to_string();
                 Ok(s)
-            },
+            }
 
             Err(e) => {
-
-
-                return Err(format!("Could not get section '{}' because {}", index, e.to_string()));
+                return Err(format!(
+                    "Could not get section '{}' because {}",
+                    index,
+                    e.to_string()
+                ));
             }
         }
     }
@@ -68,13 +73,14 @@ impl Yaml {
     /// Does this yaml section have a section with this name?
     /// Requires immutable access
     pub fn has_section<S: Display>(&self, index: S) -> bool {
-        self.get_section_names().unwrap().contains(&index.to_string())
+        self.get_section_names()
+            .unwrap()
+            .contains(&index.to_string())
     }
 
     pub fn nth<N: Into<i32>>(&self, n: N) -> Self {
         let vec = self.clone().into_iter().collect::<Vec<Yaml>>();
-        // let result
-        //     .to_string();
+
         let index = n.into() as usize;
         if index >= vec.len() {
             Yaml::from(self.to_string())
@@ -114,7 +120,8 @@ impl IntoIterator for Yaml {
                 _ => vec![],
             },
             Err(_) => {
-                vec![]
+                // This Yaml isnt a list, so make a vector of length one of our contents
+                vec![self.nth(0)]
             }
         }
         .into_iter()
@@ -144,14 +151,14 @@ impl From<yaml_rust::Yaml> for Yaml {
     fn from(yaml: yaml_rust::Yaml) -> Self {
         let mut out_str = String::new();
         let mut emitter = YamlEmitter::new(&mut out_str);
-        match emitter.dump(&yaml) {_ => {}};
+        match emitter.dump(&yaml) {
+            _ => {}
+        };
 
 
         let lines = out_str.lines().collect::<Vec<&str>>();
         out_str = if lines.len() > 0 {
-            lines[1..]
-                    .join("\n")
-                    .to_string()
+            lines[1..].join("\n").to_string()
         } else {
             "".to_string()
         };
