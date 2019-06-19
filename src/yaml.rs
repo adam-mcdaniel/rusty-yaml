@@ -117,11 +117,11 @@ impl IntoIterator for Yaml {
                     .map(|y| Self::from(y.clone()))
                     .collect::<Vec<Self>>(),
 
-                _ => vec![self.nth(0)],
+                _ => vec![Yaml::from(self.to_string())],
             },
             Err(_) => {
                 // This Yaml isnt a list, so make a vector of length one of our contents
-                vec![self.nth(0)]
+                vec![Yaml::from(self.to_string())]
             }
         }
         .into_iter()
