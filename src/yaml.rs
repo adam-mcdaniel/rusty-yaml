@@ -36,6 +36,8 @@ impl Yaml {
             },
 
             Err(e) => {
+
+
                 return Err(format!("Could not get section '{}' because {}", index, e.to_string()));
             }
         }
@@ -69,15 +71,15 @@ impl Yaml {
         self.get_section_names().unwrap().contains(&index.to_string())
     }
 
-    pub fn nth<N: Into<i32>>(&self, n: N) -> Result<Self, ()> {
+    pub fn nth<N: Into<i32>>(&self, n: N) -> Self {
         let vec = self.clone().into_iter().collect::<Vec<Yaml>>();
         // let result
         //     .to_string();
         let index = n.into() as usize;
         if index >= vec.len() {
-            Err(())
+            Yaml::from(self.to_string())
         } else {
-            Ok(vec[index].clone())
+            vec[index].clone()
         }
     }
 }

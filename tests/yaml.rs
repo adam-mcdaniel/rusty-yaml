@@ -118,6 +118,19 @@ mod tests {
 spill-the-tea:
   - tea
   - 2
-  - spill".to_string(), y.nth(0).unwrap().to_string());
+  - spill".to_string(), y.nth(0).to_string());
+    }
+
+    // Test yaml key: value
+    #[test]
+    fn yaml_key_value() {
+        let y = Yaml::from(
+            "
+        section1:
+            section2: \"testing\"
+            ",
+        );
+        
+        assert_eq!("testing".to_string(), y.get_section("section1").unwrap().get_section("section2").unwrap().nth(0).to_string());
     }
 }

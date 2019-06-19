@@ -1,6 +1,6 @@
 [package]
 name = "rusty-yaml"
-version = "0.3.3"
+version = "0.4.0"
 authors = ["adam-mcdaniel <adam.mcdaniel17@gmail.com>"]
 edition = "2018"
 description = "A rust library to parse yaml files"
