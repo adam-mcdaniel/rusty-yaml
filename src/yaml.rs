@@ -117,7 +117,7 @@ impl IntoIterator for Yaml {
                     .map(|y| Self::from(y.clone()))
                     .collect::<Vec<Self>>(),
 
-                _ => vec![],
+                _ => vec![self.nth(0)],
             },
             Err(_) => {
                 // This Yaml isnt a list, so make a vector of length one of our contents
